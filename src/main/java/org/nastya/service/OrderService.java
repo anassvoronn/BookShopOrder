@@ -22,13 +22,7 @@ public class OrderService {
 
     public void addBookToCart(Integer bookId, Integer userId) {
         Order order = orderRepository.findByUserId(userId)
-                .orElseGet(() -> {
-                    log.warn("The order for user ID {} was not found. We create a new order.", userId);
-                    Order newOrder = new Order();
-                    newOrder.setUserId(userId);
-                    newOrder.setItems(new ArrayList<>());
-                    return newOrder;
-                });
+                .orElseGet(() -> createNewOrder(userId));
         Optional<OrderItem> existingOrderItem = order.getItems().stream()
                 .filter(item -> item.getBookId().equals(bookId))
                 .findFirst();
@@ -47,5 +41,13 @@ public class OrderService {
             log.info("A book with ID {} has been added to the cart of a user with ID {}", bookId, userId);
         }
         orderRepository.save(order);
+    }
+
+    private Order createNewOrder(Integer userId) {
+        log.warn("The order for user ID {} was not found. We create a new order.", userId);
+        Order newOrder = new Order();
+        newOrder.setUserId(userId);
+        newOrder.setItems(new ArrayList<>());
+        return newOrder;
     }
 }

@@ -1,7 +1,9 @@
 package org.nastya.service;
 
+import org.nastya.dto.OrderDTO;
 import org.nastya.entity.Order;
 import org.nastya.entity.OrderItem;
+import org.nastya.enums.OrderStatus;
 import org.nastya.repository.OrderRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,9 +17,16 @@ import java.util.Optional;
 public class OrderService {
     private static final Logger log = LoggerFactory.getLogger(OrderService.class);
     private final OrderRepository orderRepository;
+    private final OrderMapper orderMapper;
 
-    public OrderService(OrderRepository orderRepository) {
+    public OrderService(OrderRepository orderRepository, OrderMapper orderMapper) {
         this.orderRepository = orderRepository;
+        this.orderMapper = orderMapper;
+    }
+
+    public Optional<OrderDTO> getOrderByUserId(Integer userId) {
+        return orderRepository.findByUserId(userId)
+                .map(orderMapper::mapToDTO);
     }
 
     public void addBookToCart(Integer bookId, Integer userId) {
@@ -48,6 +57,7 @@ public class OrderService {
         Order newOrder = new Order();
         newOrder.setUserId(userId);
         newOrder.setItems(new ArrayList<>());
+        newOrder.setStatus(OrderStatus.NEW);
         return newOrder;
     }
 }

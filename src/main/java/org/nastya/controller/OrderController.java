@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityNotFoundException;
+
 @RestController
 @RequestMapping("/api/order")
 public class OrderController {
@@ -41,5 +43,20 @@ public class OrderController {
         return orderService.getOrderByUserId(userId)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    }
+
+    @PutMapping("/updateQuantity")
+    public ResponseEntity<Void> updateBookQuantity(
+            @RequestParam Integer userId,
+            @RequestParam Integer bookId,
+            @RequestParam Integer quantity) {
+        try {
+            orderService.updateBookQuantityForUser(userId, bookId, quantity);
+            return ResponseEntity.ok().build();
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 }

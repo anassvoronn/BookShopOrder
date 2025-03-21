@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -59,5 +60,27 @@ public class OrderService {
         newOrder.setItems(new ArrayList<>());
         newOrder.setStatus(OrderStatus.NEW);
         return newOrder;
+    }
+
+    public void updateBookQuantity(Order order, Integer bookId, Integer amountToAdd) {
+        for (OrderItem item : order.getItems()) {
+            if (item.getBookId().equals(bookId)) {
+                int newQuantity = item.getQuantity() + amountToAdd;
+                if (newQuantity < 0) {
+                    throw new IllegalStateException("Quantity cannot be negative");
+                }
+                item.setQuantity(newQuantity);
+                log.info("Updated amountToAdd for book ID {}: new amountToAdd is {}", bookId, newQuantity);
+                orderRepository.save(order);
+                return;
+            }
+        }
+        throw new EntityNotFoundException("Book not found in the order");
+    }
+
+    public void updateBookQuantityForUser(Integer userId, Integer bookId, Integer amountToAdd) {
+        Order order = orderRepository.findByUserId(userId)
+                .orElseThrow(() -> new EntityNotFoundException("Order not found for user ID " + userId));
+        updateBookQuantity(order, bookId, amountToAdd);
     }
 }

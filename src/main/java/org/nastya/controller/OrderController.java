@@ -2,6 +2,7 @@ package org.nastya.controller;
 
 import org.nastya.dto.AddToOrderDTO;
 import org.nastya.dto.OrderDTO;
+import org.nastya.dto.UpdateBookQuantityDTO;
 import org.nastya.service.OrderService;
 import org.nastya.service.exception.UserAuthorizationValidationException;
 import org.slf4j.Logger;
@@ -41,5 +42,13 @@ public class OrderController {
         return orderService.getOrderByUserId(userId)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    }
+
+    @PutMapping("/updateQuantity")
+    public void updateBookQuantity(
+            @RequestBody UpdateBookQuantityDTO updateBookQuantityDTO,
+            @RequestHeader(HeaderConstants.SESSION_ID) String sessionId) throws UserAuthorizationValidationException {
+        Integer userId = authorizationValidator.getUserIdIfAuthorized(sessionId);
+        orderService.updateBookQuantityForUser(userId, updateBookQuantityDTO.getBookId(), updateBookQuantityDTO.getAmountToAdd());
     }
 }

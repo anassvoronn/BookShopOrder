@@ -45,11 +45,10 @@ public class OrderController {
     }
 
     @PutMapping("/updateQuantity")
-    public ResponseEntity<Void> updateBookQuantity(
+    public void updateBookQuantity(
             @RequestBody UpdateBookQuantityDTO updateBookQuantityDTO,
             @RequestHeader(HeaderConstants.SESSION_ID) String sessionId) throws UserAuthorizationValidationException {
         Integer userId = authorizationValidator.getUserIdIfAuthorized(sessionId);
         orderService.updateBookQuantityForUser(userId, updateBookQuantityDTO.getBookId(), updateBookQuantityDTO.getQuantity());
-        return ResponseEntity.ok().build();
     }
 }

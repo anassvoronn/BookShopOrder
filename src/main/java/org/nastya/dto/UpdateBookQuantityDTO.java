@@ -2,7 +2,7 @@ package org.nastya.dto;
 
 public class UpdateBookQuantityDTO {
     private Integer bookId;
-    private Integer quantity;
+    private Integer amountToAdd;
 
     public Integer getBookId() {
         return bookId;
@@ -13,10 +13,10 @@ public class UpdateBookQuantityDTO {
     }
 
     public Integer getQuantity() {
-        return quantity;
+        return amountToAdd;
     }
 
     public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
+        this.amountToAdd = quantity;
     }
 }

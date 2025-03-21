@@ -49,6 +49,6 @@ public class OrderController {
             @RequestBody UpdateBookQuantityDTO updateBookQuantityDTO,
             @RequestHeader(HeaderConstants.SESSION_ID) String sessionId) throws UserAuthorizationValidationException {
         Integer userId = authorizationValidator.getUserIdIfAuthorized(sessionId);
-        orderService.updateBookQuantityForUser(userId, updateBookQuantityDTO.getBookId(), updateBookQuantityDTO.getQuantity());
+        orderService.updateBookQuantityForUser(userId, updateBookQuantityDTO.getBookId(), updateBookQuantityDTO.getAmountToAdd());
     }
 }

@@ -12,11 +12,11 @@ public class UpdateBookQuantityDTO {
         this.bookId = bookId;
     }
 
-    public Integer getQuantity() {
+    public Integer getAmountToAdd() {
         return amountToAdd;
     }
 
-    public void setQuantity(Integer quantity) {
-        this.amountToAdd = quantity;
+    public void setAmountToAdd(Integer amountToAdd) {
+        this.amountToAdd = amountToAdd;
     }
 }

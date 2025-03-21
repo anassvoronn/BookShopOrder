@@ -67,7 +67,7 @@ public class OrderService {
             if (item.getBookId().equals(bookId)) {
                 int newQuantity = item.getQuantity() + quantity;
                 if (newQuantity < 0) {
-                    throw new IllegalArgumentException("Quantity cannot be negative");
+                    throw new IllegalStateException("Quantity cannot be negative");
                 }
                 item.setQuantity(newQuantity);
                 log.info("Updated quantity for book ID {}: new quantity is {}", bookId, newQuantity);
@@ -79,12 +79,8 @@ public class OrderService {
     }
 
     public void updateBookQuantityForUser(Integer userId, Integer bookId, Integer quantity) {
-        Optional<Order> optionalOrder = orderRepository.findByUserId(userId);
-        if (optionalOrder.isPresent()) {
-            Order order = optionalOrder.get();
-            updateBookQuantity(order, bookId, quantity);
-        } else {
-            throw new EntityNotFoundException("Order not found for user ID " + userId);
-        }
+        Order order = orderRepository.findByUserId(userId)
+                .orElseThrow(() -> new EntityNotFoundException("Order not found for user ID " + userId));
+        updateBookQuantity(order, bookId, quantity);
     }
 }

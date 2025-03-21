@@ -2,6 +2,7 @@ package org.nastya.controller;
 
 import org.nastya.dto.AddToOrderDTO;
 import org.nastya.dto.OrderDTO;
+import org.nastya.dto.UpdateBookQuantityDTO;
 import org.nastya.service.OrderService;
 import org.nastya.service.exception.UserAuthorizationValidationException;
 import org.slf4j.Logger;
@@ -9,8 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.persistence.EntityNotFoundException;
 
 @RestController
 @RequestMapping("/api/order")
@@ -47,16 +46,10 @@ public class OrderController {
 
     @PutMapping("/updateQuantity")
     public ResponseEntity<Void> updateBookQuantity(
-            @RequestParam Integer userId,
-            @RequestParam Integer bookId,
-            @RequestParam Integer quantity) {
-        try {
-            orderService.updateBookQuantityForUser(userId, bookId, quantity);
-            return ResponseEntity.ok().build();
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
-        }
+            @RequestBody UpdateBookQuantityDTO updateBookQuantityDTO,
+            @RequestHeader(HeaderConstants.SESSION_ID) String sessionId) throws UserAuthorizationValidationException {
+        Integer userId = authorizationValidator.getUserIdIfAuthorized(sessionId);
+        orderService.updateBookQuantityForUser(userId, updateBookQuantityDTO.getBookId(), updateBookQuantityDTO.getQuantity());
+        return ResponseEntity.ok().build();
     }
 }

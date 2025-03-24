@@ -83,4 +83,16 @@ public class OrderService {
                 .orElseThrow(() -> new EntityNotFoundException("Order not found for user ID " + userId));
         updateBookQuantity(order, bookId, amountToAdd);
     }
+
+    public void deleteOrderItems(Integer userId) {
+        Optional<Order> orderOptional = orderRepository.findByUserId(userId);
+        if (orderOptional.isPresent()) {
+            Order order = orderOptional.get();
+            order.getItems().clear();
+            orderRepository.save(order);
+            log.info("Trash bin for user with ID: {}", userId);
+        } else {
+            log.warn("Order not found for user with ID: {}", userId);
+        }
+    }
 }

@@ -51,4 +51,10 @@ public class OrderController {
         Integer userId = authorizationValidator.getUserIdIfAuthorized(sessionId);
         orderService.updateBookQuantityForUser(userId, updateBookQuantityDTO.getBookId(), updateBookQuantityDTO.getAmountToAdd());
     }
+
+    @DeleteMapping("/delete")
+    public void deleteOrderItem(@RequestHeader(HeaderConstants.SESSION_ID) String sessionId) throws UserAuthorizationValidationException {
+        Integer userId = authorizationValidator.getUserIdIfAuthorized(sessionId);
+        orderService.deleteOrderItems(userId);
+    }
 }

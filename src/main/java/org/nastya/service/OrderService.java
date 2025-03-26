@@ -8,6 +8,7 @@ import org.nastya.repository.OrderRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
@@ -25,11 +26,13 @@ public class OrderService {
         this.orderMapper = orderMapper;
     }
 
+    @Transactional
     public Optional<OrderDTO> getOrderByUserId(Integer userId) {
         return orderRepository.findByUserId(userId)
                 .map(orderMapper::mapToDTO);
     }
 
+    @Transactional
     public void addBookToCart(Integer bookId, Integer userId) {
         Order order = orderRepository.findByUserId(userId)
                 .orElseGet(() -> createNewOrder(userId));
@@ -53,6 +56,34 @@ public class OrderService {
         orderRepository.save(order);
     }
 
+    @Transactional
+    public void updateBookQuantityForUser(Integer userId, Integer bookId, Integer amountToAdd) {
+        Order order = getOrder(userId);
+        updateBookQuantity(order, bookId, amountToAdd);
+    }
+
+    @Transactional
+    public void deleteOrderItems(Integer userId) {
+        Order order = getOrder(userId);
+        order.getItems().clear();
+        orderRepository.save(order);
+        log.info("Trash bin for user with ID: {}", userId);
+
+    }
+
+    @Transactional
+    public void deleteOrderItem(Integer userId, Integer itemId) {
+        Order order = getOrder(userId);
+        order.getItems().removeIf(item -> item.getId().equals(itemId));
+        orderRepository.save(order);
+        log.info("Deleted item with ID: {} for user with ID: {}", itemId, userId);
+    }
+
+    private Order getOrder(Integer userId) {
+        return orderRepository.findByUserId(userId)
+                .orElseThrow(() -> new EntityNotFoundException("Order not found for user ID " + userId));
+    }
+
     private Order createNewOrder(Integer userId) {
         log.warn("The order for user ID {} was not found. We create a new order.", userId);
         Order newOrder = new Order();
@@ -62,7 +93,7 @@ public class OrderService {
         return newOrder;
     }
 
-    public void updateBookQuantity(Order order, Integer bookId, Integer amountToAdd) {
+    private void updateBookQuantity(Order order, Integer bookId, Integer amountToAdd) {
         for (OrderItem item : order.getItems()) {
             if (item.getBookId().equals(bookId)) {
                 int newQuantity = item.getQuantity() + amountToAdd;
@@ -76,30 +107,5 @@ public class OrderService {
             }
         }
         throw new EntityNotFoundException("Book not found in the order");
-    }
-
-    public void updateBookQuantityForUser(Integer userId, Integer bookId, Integer amountToAdd) {
-        Order order = getOrder(userId);
-        updateBookQuantity(order, bookId, amountToAdd);
-    }
-
-    public void deleteOrderItems(Integer userId) {
-        Order order = getOrder(userId);
-        order.getItems().clear();
-        orderRepository.save(order);
-        log.info("Trash bin for user with ID: {}", userId);
-
-    }
-
-    public void deleteOrderItem(Integer userId, Integer itemId) {
-        Order order = getOrder(userId);
-        order.getItems().removeIf(item -> item.getId().equals(itemId));
-        orderRepository.save(order);
-        log.info("Deleted item with ID: {} for user with ID: {}", itemId, userId);
-    }
-
-    private Order getOrder(Integer userId) {
-        return orderRepository.findByUserId(userId)
-                .orElseThrow(() -> new EntityNotFoundException("Order not found for user ID " + userId));
     }
 }

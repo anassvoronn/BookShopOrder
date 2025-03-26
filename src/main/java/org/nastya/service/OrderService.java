@@ -79,32 +79,27 @@ public class OrderService {
     }
 
     public void updateBookQuantityForUser(Integer userId, Integer bookId, Integer amountToAdd) {
-        Order order = orderRepository.findByUserId(userId)
-                .orElseThrow(() -> new EntityNotFoundException("Order not found for user ID " + userId));
+        Order order = getOrder(userId);
         updateBookQuantity(order, bookId, amountToAdd);
     }
 
     public void deleteOrderItems(Integer userId) {
-        Optional<Order> orderOptional = orderRepository.findByUserId(userId);
-        if (orderOptional.isPresent()) {
-            Order order = orderOptional.get();
-            order.getItems().clear();
-            orderRepository.save(order);
-            log.info("Trash bin for user with ID: {}", userId);
-        } else {
-            log.warn("Order not found for user with ID: {}", userId);
-        }
+        Order order = getOrder(userId);
+        order.getItems().clear();
+        orderRepository.save(order);
+        log.info("Trash bin for user with ID: {}", userId);
+
     }
 
     public void deleteOrderItem(Integer userId, Integer itemId) {
-        Optional<Order> orderOptional = orderRepository.findByUserId(userId);
-        if (orderOptional.isPresent()) {
-            Order order = orderOptional.get();
-            order.getItems().removeIf(item -> item.getId().equals(itemId));
-            orderRepository.save(order);
-            log.info("Deleted item with ID: {} for user with ID: {}", itemId, userId);
-        } else {
-            log.warn("Order not found for user with ID: {}", userId);
-        }
+        Order order = getOrder(userId);
+        order.getItems().removeIf(item -> item.getId().equals(itemId));
+        orderRepository.save(order);
+        log.info("Deleted item with ID: {} for user with ID: {}", itemId, userId);
+    }
+
+    private Order getOrder(Integer userId) {
+        return orderRepository.findByUserId(userId)
+                .orElseThrow(() -> new EntityNotFoundException("Order not found for user ID " + userId));
     }
 }

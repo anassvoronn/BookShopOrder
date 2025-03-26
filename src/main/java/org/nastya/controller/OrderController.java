@@ -26,14 +26,8 @@ public class OrderController {
     @PutMapping
     public void addBookToCart(@RequestBody AddToOrderDTO addToOrderDTO,
                               @RequestHeader(HeaderConstants.SESSION_ID) String sessionId) throws UserAuthorizationValidationException {
-        try {
-            Integer userId = authorizationValidator.getUserIdIfAuthorized(sessionId);
-            orderService.addBookToCart(addToOrderDTO.getBookId(), userId);
-        } catch (RuntimeException e) {
-            log.error("Error occurred while adding the book to cart", e);
-            throw e;
-        }
-
+        Integer userId = authorizationValidator.getUserIdIfAuthorized(sessionId);
+        orderService.addBookToCart(addToOrderDTO.getBookId(), userId);
     }
 
     @GetMapping
@@ -56,5 +50,11 @@ public class OrderController {
     public void deleteOrderItem(@RequestHeader(HeaderConstants.SESSION_ID) String sessionId) throws UserAuthorizationValidationException {
         Integer userId = authorizationValidator.getUserIdIfAuthorized(sessionId);
         orderService.deleteOrderItems(userId);
+    }
+
+    @DeleteMapping("/delete/{itemId}")
+    public void deleteOrderItem(@PathVariable Integer itemId, @RequestHeader(HeaderConstants.SESSION_ID) String sessionId) throws UserAuthorizationValidationException {
+        Integer userId = authorizationValidator.getUserIdIfAuthorized(sessionId);
+        orderService.deleteOrderItem(userId, itemId);
     }
 }

@@ -15,12 +15,4 @@ public class UpdateBookQuantityDTO {
         this.bookId = bookId;
         this.amountToAdd = amountToAdd;
     }
-
-    public Integer getBookId() {
-        return bookId;
-    }
-
-    public Integer getAmountToAdd() {
-        return amountToAdd;
-    }
 }

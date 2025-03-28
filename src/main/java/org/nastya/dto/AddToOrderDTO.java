@@ -12,8 +12,4 @@ public class AddToOrderDTO {
     public AddToOrderDTO(@JsonProperty("bookId") Integer bookId) {
         this.bookId = bookId;
     }
-
-    public Integer getBookId() {
-        return bookId;
-    }
 }

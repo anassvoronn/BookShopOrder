@@ -1,5 +1,7 @@
 package org.nastya.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Value;
 import org.nastya.enums.OrderStatus;
 
@@ -12,19 +14,15 @@ public class OrderDTO {
     OrderStatus status;
     List<OrderItemDTO> items;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public List<OrderItemDTO> getItems() {
-        return items;
-    }
-
-    public OrderStatus getStatus() {
-        return status;
+    @JsonCreator
+    public OrderDTO(
+            @JsonProperty("id") Integer id,
+            @JsonProperty("userId") Integer userId,
+            @JsonProperty("status") OrderStatus status,
+            @JsonProperty("items") List<OrderItemDTO> items) {
+        this.id = id;
+        this.userId = userId;
+        this.status = status;
+        this.items = items;
     }
 }

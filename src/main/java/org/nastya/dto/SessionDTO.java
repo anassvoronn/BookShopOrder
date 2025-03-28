@@ -18,16 +18,4 @@ public class SessionDTO {
         this.sessionId = sessionId;
         this.userId = userId;
     }
-
-    public int getId() {
-        return id;
-    }
-
-    public String getSessionId() {
-        return sessionId;
-    }
-
-    public int getUserId() {
-        return userId;
-    }
 }

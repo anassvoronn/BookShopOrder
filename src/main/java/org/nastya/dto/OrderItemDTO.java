@@ -24,20 +24,4 @@ public class OrderItemDTO {
         this.quantity = quantity;
         this.price = price;
     }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public Integer getBookId() {
-        return bookId;
-    }
-
-    public Integer getQuantity() {
-        return quantity;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
 }

@@ -53,7 +53,6 @@ public class OrderService {
             order.getItems().add(newOrderItem);
             log.info("A book with ID {} has been added to the cart of a user with ID {}", bookId, userId);
         }
-        orderRepository.save(order);
     }
 
     @Transactional
@@ -66,7 +65,6 @@ public class OrderService {
     public void deleteOrderItems(Integer userId) {
         Order order = getOrder(userId);
         order.getItems().clear();
-        orderRepository.save(order);
         log.info("Trash bin for user with ID: {}", userId);
 
     }
@@ -75,8 +73,18 @@ public class OrderService {
     public void deleteOrderItem(Integer userId, Integer itemId) {
         Order order = getOrder(userId);
         order.getItems().removeIf(item -> item.getId().equals(itemId));
-        orderRepository.save(order);
         log.info("Deleted item with ID: {} for user with ID: {}", itemId, userId);
+    }
+
+    @Transactional
+    public void completeOrder(Integer userId) {
+        Order order = getOrder(userId);
+        if (order.getStatus() == OrderStatus.NEW) {
+            order.setStatus(OrderStatus.COMPLETE);
+        } else {
+            log.warn("Order status is not NEW: {}", order.getId());
+            throw new IllegalStateException("Order status is not NEW.");
+        }
     }
 
     private Order getOrder(Integer userId) {
@@ -90,7 +98,7 @@ public class OrderService {
         newOrder.setUserId(userId);
         newOrder.setItems(new ArrayList<>());
         newOrder.setStatus(OrderStatus.NEW);
-        return newOrder;
+        return orderRepository.save(newOrder);
     }
 
     private void updateBookQuantity(Order order, Integer bookId, Integer amountToAdd) {

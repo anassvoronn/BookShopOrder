@@ -1,40 +1,21 @@
 package org.nastya.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Value;
+
+@Value
 public class SessionDTO {
-    private int id;
-    private String sessionId;
-    private int userId;
+    int id;
+    String sessionId;
+    int userId;
 
-    public SessionDTO(int id, String sessionId, int userId) {
+    @JsonCreator
+    public SessionDTO(@JsonProperty("id") int id,
+                      @JsonProperty("sessionId") String sessionId,
+                      @JsonProperty("userId") int userId) {
         this.id = id;
         this.sessionId = sessionId;
-        this.userId = userId;
-    }
-
-    public SessionDTO() {
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getSessionId() {
-        return sessionId;
-    }
-
-    public void setSessionId(String sessionId) {
-        this.sessionId = sessionId;
-    }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
         this.userId = userId;
     }
 }

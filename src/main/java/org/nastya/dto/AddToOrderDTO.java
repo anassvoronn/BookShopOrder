@@ -1,13 +1,15 @@
 package org.nastya.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Value;
+
+@Value
 public class AddToOrderDTO {
-    private Integer bookId;
+    Integer bookId;
 
-    public Integer getBookId() {
-        return bookId;
-    }
-
-    public void setBookId(Integer bookId) {
+    @JsonCreator
+    public AddToOrderDTO(@JsonProperty("bookId") Integer bookId) {
         this.bookId = bookId;
     }
 }

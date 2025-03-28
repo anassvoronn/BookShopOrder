@@ -1,52 +1,43 @@
 package org.nastya.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Value;
+
 import java.math.BigDecimal;
 
+@Value
 public class OrderItemDTO {
-    private Integer id;
-    private Integer bookId;
-    private Integer quantity;
-    private BigDecimal price;
+    Integer id;
+    Integer bookId;
+    Integer quantity;
+    BigDecimal price;
 
-    public OrderItemDTO(Integer id, Integer bookId, Integer quantity, BigDecimal price) {
+    @JsonCreator
+    public OrderItemDTO(
+            @JsonProperty("id") Integer id,
+            @JsonProperty("bookId") Integer bookId,
+            @JsonProperty("quantity") Integer quantity,
+            @JsonProperty("price") BigDecimal price) {
         this.id = id;
         this.bookId = bookId;
         this.quantity = quantity;
         this.price = price;
-    }
-
-    public OrderItemDTO() {
     }
 
     public Integer getId() {
         return id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
     public Integer getBookId() {
         return bookId;
-    }
-
-    public void setBookId(Integer bookId) {
-        this.bookId = bookId;
     }
 
     public Integer getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
-    }
-
     public BigDecimal getPrice() {
         return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
     }
 }

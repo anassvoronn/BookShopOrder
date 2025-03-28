@@ -57,4 +57,10 @@ public class OrderController {
         Integer userId = authorizationValidator.getUserIdIfAuthorized(sessionId);
         orderService.deleteOrderItem(userId, itemId);
     }
+
+    @PutMapping("/complete")
+    public void completeOrder(@RequestHeader(HeaderConstants.SESSION_ID) String sessionId) throws UserAuthorizationValidationException {
+        Integer userId = authorizationValidator.getUserIdIfAuthorized(sessionId);
+        orderService.completeOrder(userId);
+    }
 }

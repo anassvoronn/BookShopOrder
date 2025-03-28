@@ -1,6 +1,5 @@
 package org.nastya.dto;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Value;
 
@@ -10,7 +9,6 @@ public class SessionDTO {
     String sessionId;
     int userId;
 
-    @JsonCreator
     public SessionDTO(@JsonProperty("id") int id,
                       @JsonProperty("sessionId") String sessionId,
                       @JsonProperty("userId") int userId) {

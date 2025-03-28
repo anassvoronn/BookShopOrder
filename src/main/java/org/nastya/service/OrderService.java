@@ -1,5 +1,6 @@
 package org.nastya.service;
 
+import lombok.RequiredArgsConstructor;
 import org.nastya.dto.OrderDTO;
 import org.nastya.entity.Order;
 import org.nastya.entity.OrderItem;
@@ -16,15 +17,11 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class OrderService {
     private static final Logger log = LoggerFactory.getLogger(OrderService.class);
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
-
-    public OrderService(OrderRepository orderRepository, OrderMapper orderMapper) {
-        this.orderRepository = orderRepository;
-        this.orderMapper = orderMapper;
-    }
 
     @Transactional
     public Optional<OrderDTO> getOrderByUserId(Integer userId) {

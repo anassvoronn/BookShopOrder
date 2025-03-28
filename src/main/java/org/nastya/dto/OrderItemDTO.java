@@ -1,6 +1,5 @@
 package org.nastya.dto;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Value;
 
@@ -13,7 +12,6 @@ public class OrderItemDTO {
     Integer quantity;
     BigDecimal price;
 
-    @JsonCreator
     public OrderItemDTO(
             @JsonProperty("id") Integer id,
             @JsonProperty("bookId") Integer bookId,

@@ -28,7 +28,7 @@ public class OrderController {
     @GetMapping
     public OrderDTO getOrderById(@RequestHeader(HeaderConstants.SESSION_ID) String sessionId) throws UserAuthorizationValidationException {
         Integer userId = authorizationValidator.getUserIdIfAuthorized(sessionId);
-        return orderService.getOrderByUserId(userId).get();
+        return orderService.getCurrentOrderByUserId(userId);
     }
 
     @PutMapping("/updateQuantity")

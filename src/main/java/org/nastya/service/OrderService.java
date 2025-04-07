@@ -24,14 +24,15 @@ public class OrderService {
     private final OrderMapper orderMapper;
 
     @Transactional
-    public Optional<OrderDTO> getOrderByUserId(Integer userId) {
-        return orderRepository.findByUserId(userId)
-                .map(orderMapper::mapToDTO);
+    public OrderDTO getCurrentOrderByUserId(Integer userId) {
+        return orderRepository.findByUserIdAndStatus(userId, OrderStatus.NEW)
+                .map(orderMapper::mapToDTO)
+                .orElse(null);
     }
 
     @Transactional
     public void addBookToCart(Integer bookId, Integer userId) {
-        Order order = orderRepository.findByUserId(userId)
+        Order order = orderRepository.findByUserIdAndStatus(userId, OrderStatus.NEW)
                 .orElseGet(() -> createNewOrder(userId));
         Optional<OrderItem> existingOrderItem = order.getItems().stream()
                 .filter(item -> item.getBookId().equals(bookId))
@@ -85,7 +86,7 @@ public class OrderService {
     }
 
     private Order getOrder(Integer userId) {
-        return orderRepository.findByUserId(userId)
+        return orderRepository.findByUserIdAndStatus(userId, OrderStatus.NEW)
                 .orElseThrow(() -> new EntityNotFoundException("Order not found for user ID " + userId));
     }
 

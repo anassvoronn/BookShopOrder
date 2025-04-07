@@ -13,7 +13,7 @@ import java.util.List;
 @Setter
 @Entity
 @NoArgsConstructor
-@Table(name = "orders", uniqueConstraints = @UniqueConstraint(columnNames = "user_id"))
+@Table(name = "orders")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

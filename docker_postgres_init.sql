@@ -36,6 +36,3 @@ ALTER TABLE IF EXISTS public.orderitem
 
 ALTER TABLE public.orders
 ADD COLUMN status VARCHAR NOT NULL DEFAULT 'NEW';
-
-ALTER TABLE public.orders
-ADD CONSTRAINT unique_user_id UNIQUE (user_id);

@@ -2,6 +2,9 @@
 
 -- DROP TABLE IF EXISTS public.orders;
 
+CREATE SEQUENCE orders_id_seq START 1;
+CREATE SEQUENCE orderitem_id_seq START 1;
+
 CREATE TABLE IF NOT EXISTS public.orders
 (
     id integer NOT NULL DEFAULT nextval('orders_id_seq'::regclass),

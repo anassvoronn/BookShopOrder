@@ -1,11 +1,12 @@
 package org.nastya.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.nastya.lib.auth.AuthorizationValidator;
+import org.nastya.lib.auth.exception.UserAuthorizationValidationException;
 import org.nastya.dto.AddToOrderDTO;
 import org.nastya.dto.OrderDTO;
 import org.nastya.dto.UpdateBookQuantityDTO;
 import org.nastya.service.OrderService;
-import org.nastya.service.exception.UserAuthorizationValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;

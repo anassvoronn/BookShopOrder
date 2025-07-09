@@ -72,6 +72,11 @@
             <version>1.18.24</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.nastya</groupId>
+            <artifactId>user-auth-library</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
 
     <build>

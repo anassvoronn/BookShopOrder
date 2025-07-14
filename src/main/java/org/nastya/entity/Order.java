@@ -1,11 +1,11 @@
 package org.nastya.entity;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.nastya.enums.OrderStatus;
 
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 

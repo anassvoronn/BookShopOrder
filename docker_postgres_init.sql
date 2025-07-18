@@ -39,3 +39,24 @@ ALTER TABLE IF EXISTS public.orderitem
 
 ALTER TABLE public.orders
 ADD COLUMN status VARCHAR NOT NULL DEFAULT 'NEW';
+
+
+CREATE SEQUENCE transactionshistory_id_seq START 1;
+
+CREATE TABLE IF NOT EXISTS public.transactionshistory
+(
+    id integer NOT NULL DEFAULT nextval('transactionshistory_id_seq'::regclass),
+    amount numeric(5,2) NOT NULL,
+    operation_type character varying(20) COLLATE pg_catalog."default" NOT NULL,
+    date timestamp with time zone NOT NULL DEFAULT now(),
+    balance numeric(5,2) NOT NULL,
+    user_id integer NOT NULL,
+    CONSTRAINT transactionshistory_pkey PRIMARY KEY (id),
+    CONSTRAINT transactionshistory_operation_type_check CHECK (operation_type::text = ANY (ARRAY['Deposit'::character varying, 'Withdrawal'::character varying]::text[])),
+    CONSTRAINT transactionshistory_balance_check CHECK (balance >= 0::numeric)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.transactionshistory
+    OWNER to postgres;

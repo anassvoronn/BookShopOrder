@@ -41,16 +41,16 @@ public class TransactionsHistoryService {
     }
 
     @Transactional
-    public TransactionsHistoryDTO deposit(double operationDTO,
+    public TransactionsHistoryDTO deposit(double amount,
                                           Integer userId) {
-        validateAmount(operationDTO);
+        validateAmount(amount);
         double currentBalance = getCurrentBalance(userId).getBalance();
         log.info("Current balance for user: {}", currentBalance);
-        double newBalance = currentBalance + operationDTO;
+        double newBalance = currentBalance + amount;
         log.info("New balance after deposit: {}", newBalance);
         TransactionsHistory transaction = createTransaction(
                 userId,
-                operationDTO,
+                amount,
                 OperationType.DEPOSIT,
                 newBalance
         );
@@ -61,18 +61,18 @@ public class TransactionsHistoryService {
     }
 
     @Transactional
-    public TransactionsHistoryDTO payment(double operationDTO,
+    public TransactionsHistoryDTO payment(double amount,
                                           Integer userId) {
-        validateAmount(operationDTO);
+        validateAmount(amount);
 
         double currentBalance = getCurrentBalance(userId).getBalance();
-        validateSufficientFunds(currentBalance, operationDTO);
+        validateSufficientFunds(currentBalance, amount);
 
-        double newBalance = currentBalance - operationDTO;
+        double newBalance = currentBalance - amount;
 
         TransactionsHistory transaction = createTransaction(
                 userId,
-                operationDTO,
+                amount,
                 OperationType.PAYMENT,
                 newBalance
         );
@@ -83,18 +83,18 @@ public class TransactionsHistoryService {
     }
 
     @Transactional
-    public TransactionsHistoryDTO withdrawal(double operationDTO,
+    public TransactionsHistoryDTO withdrawal(double amount,
                                              Integer userId) {
-        validateAmount(operationDTO);
+        validateAmount(amount);
 
         double currentBalance = getCurrentBalance(userId).getBalance();
-        validateSufficientFunds(currentBalance, operationDTO);
+        validateSufficientFunds(currentBalance, amount);
 
-        double newBalance = currentBalance - operationDTO;
+        double newBalance = currentBalance - amount;
 
         TransactionsHistory transaction = createTransaction(
                 userId,
-                operationDTO,
+                amount,
                 OperationType.WITHDRAWAL,
                 newBalance
         );

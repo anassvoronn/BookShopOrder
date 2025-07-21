@@ -16,8 +16,7 @@ public class TransactionsHistoryImpl implements TransactionsHistoryMapper {
                 transactionsHistory.getAmount(),
                 transactionsHistory.getOperationType(),
                 transactionsHistory.getDate(),
-                transactionsHistory.getBalance(),
-                transactionsHistory.getUserId()
+                transactionsHistory.getBalance()
         );
     }
 }

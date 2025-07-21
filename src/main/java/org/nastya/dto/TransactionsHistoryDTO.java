@@ -8,9 +8,8 @@ import java.time.ZonedDateTime;
 @Value
 public class TransactionsHistoryDTO {
     Integer id;
-    Integer amount;
+    double amount;
     OperationType operationType;
     ZonedDateTime date;
-    Integer balance;
-    Integer userId;
+    double balance;
 }

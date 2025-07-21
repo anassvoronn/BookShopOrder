@@ -12,11 +12,11 @@ import java.util.Optional;
 @Repository
 public interface TransactionsHistoryRepository extends JpaRepository<TransactionsHistory, Integer> {
 
-    @Query("SELECT t.balance FROM TransactionsHistory t " +
-            "WHERE t.userId = :userId ORDER BY t.date DESC LIMIT 1")
-    Optional<Integer> findCurrentBalanceByUserId(@Param("userId") Integer userId);
+    @Query("""
+             SELECT t.balance FROM TransactionsHistory t
+             WHERE t.userId = :userId ORDER BY t.date DESC LIMIT 1
+            """)
+    Optional<Double> findCurrentBalanceByUserId(@Param("userId") Integer userId);
 
     List<TransactionsHistory> findByUserIdOrderByDateDesc(Integer userId);
-
-    boolean existsByUserId(Integer userId);
 }

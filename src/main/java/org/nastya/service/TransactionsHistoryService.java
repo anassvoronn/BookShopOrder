@@ -2,7 +2,6 @@ package org.nastya.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.nastya.dto.BalanceOperationDTO;
 import org.nastya.dto.CurrentBalanceDTO;
 import org.nastya.dto.TransactionsHistoryDTO;
 import org.nastya.entity.TransactionsHistory;
@@ -23,13 +22,10 @@ public class TransactionsHistoryService {
 
     public CurrentBalanceDTO getCurrentBalance(Integer userId) {
         log.info("Getting current balance for user ID: {}", userId);
-        int balance = transactionsHistoryRepository.findCurrentBalanceByUserId(userId)
-                .orElseThrow(() -> {
-                    log.error("Balance not found for user ID: {}", userId);
-                    return new RuntimeException("User balance not found");
-                });
-        log.info("Returning balance for user {}: {}", userId, balance);
-        return new CurrentBalanceDTO(userId, balance);
+        double balance = transactionsHistoryRepository.findCurrentBalanceByUserId(userId)
+                .orElse(0.0);
+        log.info("Returning balance for user: {}", balance);
+        return new CurrentBalanceDTO(balance);
     }
 
     @Transactional
@@ -45,22 +41,16 @@ public class TransactionsHistoryService {
     }
 
     @Transactional
-    public TransactionsHistoryDTO deposit(BalanceOperationDTO operationDTO,
+    public TransactionsHistoryDTO deposit(double operationDTO,
                                           Integer userId) {
-        log.info("Processing deposit request. User ID: {}, Amount: {}",
-                operationDTO.getUserId(), operationDTO.getAmount());
-        if (!userId.equals(operationDTO.getUserId())) {
-            log.warn("Authorization failed! Authorized ID: {}, Request ID: {}",
-                    userId, operationDTO.getUserId());
-        }
-        validateAmount(operationDTO.getAmount());
-        int currentBalance = getCurrentBalanceOrZero(operationDTO.getUserId());
-        log.info("Current balance for user {}: {}", operationDTO.getUserId(), currentBalance);
-        int newBalance = currentBalance + operationDTO.getAmount();
+        validateAmount(operationDTO);
+        double currentBalance = getCurrentBalance(userId).getBalance();
+        log.info("Current balance for user: {}", currentBalance);
+        double newBalance = currentBalance + operationDTO;
         log.info("New balance after deposit: {}", newBalance);
         TransactionsHistory transaction = createTransaction(
-                operationDTO.getUserId(),
-                operationDTO.getAmount(),
+                userId,
+                operationDTO,
                 OperationType.DEPOSIT,
                 newBalance
         );
@@ -71,25 +61,19 @@ public class TransactionsHistoryService {
     }
 
     @Transactional
-    public TransactionsHistoryDTO withdraw(BalanceOperationDTO operationDTO,
-                                           Integer userId) {
-        log.info("Processing withdraw request. User ID: {}, Amount: {}",
-                operationDTO.getUserId(), operationDTO.getAmount());
-        if (!userId.equals(operationDTO.getUserId())) {
-            log.warn("Authorization failed! Authorized ID: {}, Request ID: {}",
-                    userId, operationDTO.getUserId());
-        }
-        validateAmount(operationDTO.getAmount());
+    public TransactionsHistoryDTO payment(double operationDTO,
+                                          Integer userId) {
+        validateAmount(operationDTO);
 
-        int currentBalance = getCurrentBalance(operationDTO.getUserId()).getBalance();
-        validateSufficientFunds(currentBalance, operationDTO.getAmount());
+        double currentBalance = getCurrentBalance(userId).getBalance();
+        validateSufficientFunds(currentBalance, operationDTO);
 
-        int newBalance = currentBalance - operationDTO.getAmount();
+        double newBalance = currentBalance - operationDTO;
 
         TransactionsHistory transaction = createTransaction(
-                operationDTO.getUserId(),
-                operationDTO.getAmount(),
-                OperationType.WITHDRAWAL,
+                userId,
+                operationDTO,
+                OperationType.PAYMENT,
                 newBalance
         );
 
@@ -98,15 +82,28 @@ public class TransactionsHistoryService {
         );
     }
 
-    private int getCurrentBalanceOrZero(Integer userId) {
-        boolean userExists = transactionsHistoryRepository.existsByUserId(userId);
-        log.info("User {} exists: {}", userId, userExists);
-        return userExists
-                ? getCurrentBalance(userId).getBalance()
-                : 0;
+    @Transactional
+    public TransactionsHistoryDTO withdrawal(double operationDTO,
+                                             Integer userId) {
+        validateAmount(operationDTO);
+
+        double currentBalance = getCurrentBalance(userId).getBalance();
+        validateSufficientFunds(currentBalance, operationDTO);
+
+        double newBalance = currentBalance - operationDTO;
+
+        TransactionsHistory transaction = createTransaction(
+                userId,
+                operationDTO,
+                OperationType.WITHDRAWAL,
+                newBalance
+        );
+
+        TransactionsHistory savedTransaction = transactionsHistoryRepository.save(transaction);
+        return transactionsHistoryMapper.mapToDto(savedTransaction);
     }
 
-    private void validateAmount(int amount) {
+    private void validateAmount(double amount) {
         log.info("Validating amount: {}", amount);
         if (amount <= 0) {
             log.error("Invalid amount provided: {}", amount);
@@ -114,14 +111,14 @@ public class TransactionsHistoryService {
         }
     }
 
-    private void validateSufficientFunds(int currentBalance, int amount) {
+    private void validateSufficientFunds(double currentBalance, double amount) {
         if (currentBalance < amount) {
             throw new RuntimeException("Insufficient funds");
         }
     }
 
-    private TransactionsHistory createTransaction(Integer userId, int amount,
-                                                  OperationType operationType, int balance) {
+    private TransactionsHistory createTransaction(Integer userId, double amount,
+                                                  OperationType operationType, double balance) {
         log.info("Creating transaction. User: {}, Amount: {}, Type: {}",
                 userId, amount, operationType);
         TransactionsHistory transaction = new TransactionsHistory();

@@ -1,15 +1,10 @@
 package org.nastya.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.nastya.enums.OperationType;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Value
 public class BalanceOperationDTO {
-    private Integer userId;
-    private int amount;
+    double amount;
+    OperationType operationType;
 }

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 @Component
-public class TransactionsHistoryImpl implements TransactionsHistoryMapper {
+public class TransactionsHistoryMapperImpl implements TransactionsHistoryMapper {
     @Override
     public TransactionsHistoryDTO mapToDto(TransactionsHistory transactionsHistory) {
         Assert.notNull(transactionsHistory, "Entity must not be null");

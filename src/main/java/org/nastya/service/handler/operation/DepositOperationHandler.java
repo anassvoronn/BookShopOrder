@@ -6,6 +6,8 @@ import org.nastya.entity.TransactionsHistory;
 import org.nastya.enums.OperationType;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+
 @Log4j2
 @Component
 public class DepositOperationHandler extends AbstractOperationHandler implements OperationHandler {
@@ -16,11 +18,9 @@ public class DepositOperationHandler extends AbstractOperationHandler implements
     }
 
     @Override
-    public TransactionsHistoryDTO handle(double amount,
-                                         double currentBalance,
-                                         Integer userId) {
-        validateAmount(amount);
-        double newBalance = currentBalance + amount;
+    public TransactionsHistoryDTO handle(BigDecimal amount, Integer userId) {
+        BigDecimal currentBalance = getCurrentBalance(userId);
+        BigDecimal newBalance = currentBalance.add(amount);
         log.info("Current balance: {}, New balance after deposit: {}", currentBalance, newBalance);
 
         TransactionsHistory transaction = createTransaction(

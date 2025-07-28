@@ -6,6 +6,8 @@ import org.nastya.entity.TransactionsHistory;
 import org.nastya.enums.OperationType;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+
 @Log4j2
 @Component
 public class WithdrawalOperationHandler extends AbstractOperationHandler implements OperationHandler {
@@ -16,12 +18,10 @@ public class WithdrawalOperationHandler extends AbstractOperationHandler impleme
     }
 
     @Override
-    public TransactionsHistoryDTO handle(double amount,
-                                         double currentBalance,
-                                         Integer userId) {
-        validateAmount(amount);
+    public TransactionsHistoryDTO handle(BigDecimal amount, Integer userId) {
+        BigDecimal currentBalance = getCurrentBalance(userId);
         validateSufficientFunds(currentBalance, amount);
-        double newBalance = currentBalance - amount;
+        BigDecimal newBalance = currentBalance.subtract(amount);
         log.info("Withdrawal approved. Deducting {} from account. New balance will be {}",
                 amount, newBalance);
 

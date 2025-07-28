@@ -12,6 +12,7 @@ import org.nastya.repository.TransactionsHistoryRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -33,8 +34,8 @@ public class TransactionsHistoryService {
 
     public CurrentBalanceDTO getCurrentBalance(Integer userId) {
         log.info("Getting current balance for user ID: {}", userId);
-        double balance = transactionsHistoryRepository.findCurrentBalanceByUserId(userId)
-                .orElse(0.0);
+        BigDecimal balance = transactionsHistoryRepository.findCurrentBalanceByUserId(userId)
+                .orElse(BigDecimal.valueOf(0.0));
         log.info("Returning balance for user: {}", balance);
         return new CurrentBalanceDTO(balance);
     }
@@ -53,9 +54,9 @@ public class TransactionsHistoryService {
 
     @Transactional
     public TransactionsHistoryDTO processTransaction(OperationType operationType,
-                                                     double amount,
+                                                     BigDecimal amount,
                                                      Integer userId) {
-        double currentBalance = getCurrentBalance(userId).getBalance();
+        validateAmount(amount);
         OperationHandler handler = operationHandlerMap.get(operationType);
 
         if (handler == null) {
@@ -63,10 +64,18 @@ public class TransactionsHistoryService {
             throw new IllegalArgumentException("Unknown operation type: " + operationType);
         }
 
-        TransactionsHistoryDTO dto = handler.handle(amount, currentBalance, userId);
+        TransactionsHistoryDTO dto = handler.handle(amount, userId);
 
         log.info("Transaction completed successfully. Type: {}, User ID: {}, Amount: {}",
                 operationType, userId, amount);
         return dto;
+    }
+
+    private void validateAmount(BigDecimal amount) {
+        log.info("Validating amount: {}", amount);
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            log.error("Invalid amount provided: {}", amount);
+            throw new IllegalArgumentException("Amount must be positive");
+        }
     }
 }

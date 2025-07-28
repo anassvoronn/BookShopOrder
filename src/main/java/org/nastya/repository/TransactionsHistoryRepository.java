@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,7 +17,7 @@ public interface TransactionsHistoryRepository extends JpaRepository<Transaction
              SELECT t.balance FROM TransactionsHistory t
              WHERE t.userId = :userId ORDER BY t.date DESC LIMIT 1
             """)
-    Optional<Double> findCurrentBalanceByUserId(@Param("userId") Integer userId);
+    Optional<BigDecimal> findCurrentBalanceByUserId(@Param("userId") Integer userId);
 
     List<TransactionsHistory> findByUserIdOrderByDateDesc(Integer userId);
 }

@@ -8,6 +8,7 @@ import org.nastya.repository.TransactionsHistoryRepository;
 import org.nastya.service.TransactionsHistoryMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
 @Log4j2
@@ -17,22 +18,14 @@ public abstract class AbstractOperationHandler {
     @Autowired
     private TransactionsHistoryMapper transactionsHistoryMapper;
 
-    public void validateAmount(double amount) {
-        log.info("Validating amount: {}", amount);
-        if (amount <= 0) {
-            log.error("Invalid amount provided: {}", amount);
-            throw new IllegalArgumentException("Amount must be positive");
-        }
-    }
-
-    public void validateSufficientFunds(double currentBalance, double amount) {
-        if (currentBalance < amount) {
+    protected void validateSufficientFunds(BigDecimal currentBalance, BigDecimal amount) {
+        if (currentBalance.compareTo(amount) < 0) {
             throw new RuntimeException("Insufficient funds");
         }
     }
 
-    public TransactionsHistory createTransaction(Integer userId, double amount,
-                                                 OperationType operationType, double balance) {
+    protected TransactionsHistory createTransaction(Integer userId, BigDecimal amount,
+                                                    OperationType operationType, BigDecimal balance) {
         log.info("Creating transaction. User: {}, Amount: {}, Type: {}",
                 userId, amount, operationType);
         TransactionsHistory transaction = new TransactionsHistory();
@@ -45,14 +38,19 @@ public abstract class AbstractOperationHandler {
         return transaction;
     }
 
-    public TransactionsHistoryDTO save(TransactionsHistory transactionsHistory) {
+    protected TransactionsHistoryDTO save(TransactionsHistory transactionsHistory) {
         TransactionsHistory savedTransaction = transactionsHistoryRepository.save(transactionsHistory);
         log.info("Operation {} completed. Transaction ID: {}, New balance: {}",
                 transactionsHistory.getOperationType(),
-                       savedTransaction.getId(),
+                savedTransaction.getId(),
                 transactionsHistory.getBalance()
         );
 
         return transactionsHistoryMapper.mapToDto(savedTransaction);
+    }
+
+    protected BigDecimal getCurrentBalance(Integer userId) {
+        return transactionsHistoryRepository.findCurrentBalanceByUserId(userId)
+                .orElse(BigDecimal.valueOf(0.0));
     }
 }

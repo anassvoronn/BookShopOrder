@@ -6,7 +6,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.nastya.enums.OperationType;
 
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -20,7 +22,7 @@ public class TransactionsHistory {
     private Integer id;
 
     @Column(name = "amount", nullable = false, precision = 15)
-    private double amount;
+    private BigDecimal amount;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "operation_type", nullable = false, length = 20)
@@ -30,8 +32,36 @@ public class TransactionsHistory {
     private ZonedDateTime date;
 
     @Column(name = "balance", nullable = false, precision = 15)
-    private double balance;
+    private BigDecimal balance;
 
     @Column(name = "user_id", nullable = false)
     private Integer userId;
+
+    @Override
+    public String toString() {
+        return "TransactionsHistory{" +
+                "id=" + id +
+                ", amount=" + amount +
+                ", operationType=" + operationType +
+                ", date=" + date +
+                ", balance=" + balance +
+                ", userId=" + userId +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        TransactionsHistory that = (TransactionsHistory) o;
+        return Objects.equals(id, that.id)
+                && Objects.equals(amount, that.amount)
+                && operationType == that.operationType
+                && Objects.equals(balance, that.balance)
+                && Objects.equals(userId, that.userId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, amount, operationType, balance, userId);
+    }
 }

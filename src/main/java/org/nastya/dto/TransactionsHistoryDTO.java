@@ -3,13 +3,14 @@ package org.nastya.dto;
 import lombok.Value;
 import org.nastya.enums.OperationType;
 
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
 @Value
 public class TransactionsHistoryDTO {
     Integer id;
-    double amount;
+    BigDecimal amount;
     OperationType operationType;
     ZonedDateTime date;
-    double balance;
+    BigDecimal balance;
 }
